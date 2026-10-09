@@ -1,0 +1,223 @@
+{
+  "info": {
+    "name": "Smart Blood Connect API Collection",
+    "_postman_id": "773a0fd3-smart-blood-connect-api",
+    "description": "Complete Postman API test collection for Smart Blood Connect full-stack system covering Auth, Donors, Hospitals, Public requisitions, and Admin workflows.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Public & Discovery",
+      "item": [
+        {
+          "name": "Get Database Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/public/stats", "host": ["{{baseUrl}}"], "path": ["api", "public", "stats"] }
+          }
+        },
+        {
+          "name": "Find Blood Inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/public/find-blood?bloodGroup=O-&includeCompatible=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "public", "find-blood"],
+              "query": [
+                { "key": "bloodGroup", "value": "O-" },
+                { "key": "includeCompatible", "value": "true" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Verified Hospitals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/public/verified-hospitals", "host": ["{{baseUrl}}"], "path": ["api", "public", "verified-hospitals"] }
+          }
+        },
+        {
+          "name": "Create Public Emergency Blood Request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requesterName\": \"John Doe\",\n  \"requesterPhone\": \"+1-555-0199\",\n  \"requesterEmail\": \"john.doe@example.com\",\n  \"patientName\": \"Jane Doe\",\n  \"patientAge\": 42,\n  \"hospitalId\": \"hosp_prof_01\",\n  \"bloodGroup\": \"O-\",\n  \"component\": \"Red Blood Cells (PRBC)\",\n  \"unitsNeeded\": 2,\n  \"priority\": \"Critical Emergency\",\n  \"notes\": \"Immediate transfusion needed\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/public/request-blood", "host": ["{{baseUrl}}"], "path": ["api", "public", "request-blood"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication & Roles",
+      "item": [
+        {
+          "name": "Register Donor",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Donor Test\",\n  \"email\": \"testdonor@smartblood.org\",\n  \"phone\": \"+1-555-8888\",\n  \"password\": \"Password@123\",\n  \"confirmPassword\": \"Password@123\",\n  \"dob\": \"1996-05-15\",\n  \"gender\": \"Male\",\n  \"bloodGroup\": \"O+\",\n  \"city\": \"San Francisco\",\n  \"consentGiven\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register-donor", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register-donor"] }
+          }
+        },
+        {
+          "name": "Register Hospital (Pending Verification)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hospitalName\": \"Mercy Care Clinic\",\n  \"licenseNumber\": \"LIC-MED-2026-4411\",\n  \"contactPerson\": \"Dr. Frank Davis\",\n  \"email\": \"mercy@smartblood.org\",\n  \"phone\": \"+1-555-7777\",\n  \"address\": \"800 Medical Center Dr\",\n  \"city\": \"San Francisco\",\n  \"postalCode\": \"94110\",\n  \"password\": \"Password@123\",\n  \"confirmPassword\": \"Password@123\",\n  \"hasBloodBank\": true,\n  \"consentGiven\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register-hospital", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register-hospital"] }
+          }
+        },
+        {
+          "name": "Login (Donor / Hospital / Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"bloodbank@metrohealth.org\",\n  \"password\": \"Password@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Get Authenticated User Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Donor Endpoints",
+      "item": [
+        {
+          "name": "Get Matching Blood Requests",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/donor/matching-requests", "host": ["{{baseUrl}}"], "path": ["api", "donor", "matching-requests"] }
+          }
+        },
+        {
+          "name": "Submit Eligibility Screening",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weightKg\": 68,\n  \"hemoglobinGdl\": 14.5,\n  \"hasRecentTattooOrPiercing\": false,\n  \"hasMajorIllness\": false,\n  \"isTakingAntibiotics\": false,\n  \"clinicalDisclaimerAcknowledged\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/donor/screening", "host": ["{{baseUrl}}"], "path": ["api", "donor", "screening"] }
+          }
+        },
+        {
+          "name": "Respond to Request (Interested)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"req_01\",\n  \"status\": \"Interested\",\n  \"contactConsent\": true,\n  \"notes\": \"Available for donation tomorrow morning\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/donor/respond", "host": ["{{baseUrl}}"], "path": ["api", "donor", "respond"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Hospital Endpoints",
+      "item": [
+        {
+          "name": "Hospital Dashboard Overview",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/hospital/dashboard-overview", "host": ["{{baseUrl}}"], "path": ["api", "hospital", "dashboard-overview"] }
+          }
+        },
+        {
+          "name": "Add Blood Inventory Unit",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bloodGroup\": \"O-\",\n  \"component\": \"Red Blood Cells (PRBC)\",\n  \"unitsAvailable\": 5,\n  \"expiryDate\": \"2026-11-20T00:00:00Z\",\n  \"storageLocation\": \"Vault 3, Shelf 2\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/hospital/inventory", "host": ["{{baseUrl}}"], "path": ["api", "hospital", "inventory"] }
+          }
+        },
+        {
+          "name": "Trigger Donor Broadcast",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/hospital/requests/req_01/broadcast", "host": ["{{baseUrl}}"], "path": ["api", "hospital", "requests", "req_01", "broadcast"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Administrator Endpoints",
+      "item": [
+        {
+          "name": "Admin Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/admin/dashboard", "host": ["{{baseUrl}}"], "path": ["api", "admin", "dashboard"] }
+          }
+        },
+        {
+          "name": "Verify Pending Hospital",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"verified\",\n  \"notes\": \"Clinical license and blood bank facilities verified by supervisor.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/admin/hospitals/hosp_prof_02/verify", "host": ["{{baseUrl}}"], "path": ["api", "admin", "hospitals", "hosp_prof_02", "verify"] }
+          }
+        },
+        {
+          "name": "Get Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/admin/audit-logs", "host": ["{{baseUrl}}"], "path": ["api", "admin", "audit-logs"] }
+          }
+        }
+      ]
+    }
+  ]
+}

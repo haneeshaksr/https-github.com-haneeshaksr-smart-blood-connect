@@ -1,0 +1,8 @@
+{
+  "name": "Smart Blood Connect",
+  "description": "Smart online blood donation and hospital coordination system connecting donors, hospitals, and emergency patients.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
